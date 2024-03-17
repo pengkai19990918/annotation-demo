@@ -6,6 +6,7 @@ export default defineConfig({
   model: {},
   initialState: {},
   request: {},
+  mfsu: false,
   layout: {
     title: '@umijs/max',
   },

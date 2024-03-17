@@ -1,4 +1,11 @@
-import { forwardRef, useCallback, useContext } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import { CanvasProps, Canvas as PaperCanvas, View } from 'react-paper-bindings';
 
 import _ from 'lodash';
@@ -12,20 +19,44 @@ type Props = CanvasProps & {
   height: number;
 };
 
+export type CanvasRef = HTMLCanvasElement | null;
+
 export const Canvas = forwardRef<HTMLCanvasElement | null, Props>(
   function Canvas({ image, width, height, ...other }, forwardedRef) {
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const value = useContext(Context);
     const [, dispatch] = value;
 
     const handleScopeReady = useCallback(
-      (scope: paper.PaperScope) => dispatch({ type: 'setScope', scope: scope }),
+      (scope: paper.PaperScope) => {
+        dispatch({ type: 'setScope', scope: scope });
+      },
       [dispatch],
     );
+
+    // ref转发 返回 canvasRef
+    useImperativeHandle<CanvasRef, CanvasRef>(
+      forwardedRef,
+      () => canvasRef.current,
+    );
+
+    useEffect(() => {
+      // 禁用右键菜单
+      canvasRef.current?.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+      });
+
+      return () => {
+        canvasRef.current?.removeEventListener('contextmenu', (e) => {
+          e.preventDefault();
+        });
+      };
+    }, []);
 
     return (
       <PaperCanvas
         {...other}
-        ref={forwardedRef}
+        ref={canvasRef}
         width={width}
         height={height}
         onScopeReady={handleScopeReady}

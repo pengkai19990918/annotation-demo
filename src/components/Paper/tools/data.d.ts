@@ -1,6 +1,11 @@
 type BaseEvent = paper.ToolEvent;
 
-export interface PaperEvent extends BaseEvent {
-  event: MouseEvent | TouchEvent;
+export interface PaperMouseEvent extends BaseEvent {
+  event: MouseEvent;
+  tool: any;
+}
+
+export interface PaperKeyEvent extends BaseEvent {
+  event: KeyboardEvent;
   tool: any;
 }

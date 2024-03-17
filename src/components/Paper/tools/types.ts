@@ -3,6 +3,7 @@ import { Circle } from './Circle';
 import { Delete } from './Delete';
 import { Move } from './Move';
 import { Pen } from './Pen';
+import { Polygon } from './Polygon';
 import { Rectangle } from './Rectangle';
 import { Select } from './Select';
 
@@ -25,6 +26,7 @@ export enum ToolName {
   Pen = 'Pen',
   Select = 'Select',
   Rectangle = 'Rectangle',
+  Polygon = 'Polygon',
 }
 
 export interface IToolNameModel extends IEnum {
@@ -56,6 +58,10 @@ export const TOOL_TYPE: IPlainObject<IToolNameModel> = {
     code: ToolName.Select,
     name: 'Select',
   },
+  [ToolName.Polygon]: {
+    code: ToolName.Polygon,
+    name: 'Polygon',
+  },
 };
 
 export const TOOL_TYPE_ARR: IToolNameModel[] = _.values(TOOL_TYPE);
@@ -66,4 +72,5 @@ export type ToolType =
   | typeof Move
   | typeof Pen
   | typeof Select
-  | typeof Rectangle;
+  | typeof Rectangle
+  | typeof Polygon;

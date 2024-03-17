@@ -3,7 +3,7 @@ import { Item, ItemData, ItemName } from '../../items';
 
 export const defaultProps = {
   strokeColor: '#ff0000',
-  strokeWidth: 3,
+  strokeWidth: 2,
   strokeScaling: false,
 };
 

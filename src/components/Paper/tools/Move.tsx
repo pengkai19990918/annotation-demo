@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
-import { PaperEvent } from './data';
+import { PaperMouseEvent } from './data';
 import { ToolName } from './types';
 import { useMouseWheel, usePan, usePinch } from './utils';
 
@@ -27,7 +27,7 @@ export const Move = () => {
   );
 
   const handleMouseDrag = useCallback(
-    (event: PaperEvent) => {
+    (event: PaperMouseEvent) => {
       const { event: e } = event;
       if (e instanceof TouchEvent && e.touches.length === 2) {
         pinch.mouseDrag(event);

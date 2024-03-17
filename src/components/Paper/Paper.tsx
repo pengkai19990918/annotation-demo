@@ -13,6 +13,7 @@ type Props = {
 
 export const Paper = ({ image }: Props) => {
   const [ref, { width, height }] = useMeasure({ debounce: 150 });
+
   return (
     <Provider>
       <div>
