@@ -1,15 +1,20 @@
 import { useCallback, useRef } from 'react';
 //import { Path, PathItem } from "paper/dist/paper-core";
+import _ from 'lodash';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
+import { ToolName } from './types';
+import { useMouseWheel } from './utils';
 
-const NAME = 'Select';
+const NAME = ToolName.Select;
 
 export const Select = () => {
   const [state, dispatch] = usePaper();
-  const item = useRef<paper.Item>();
+  const item = useRef<paper.Item & { props?: any; segments?: any }>();
   const point = useRef<paper.Point>();
   const changed = useRef<boolean>(false);
+
+  useMouseWheel(NAME);
 
   const handleMouseDown = useCallback(
     (event: paper.ToolEvent) => {
@@ -27,6 +32,10 @@ export const Select = () => {
           item.current = hit.item;
           point.current = event.point;
         } else {
+          if (item.current) {
+            item.current.selected = false;
+            dispatch({ type: 'setSelection', selection: undefined });
+          }
           item.current = undefined;
           point.current = undefined;
           dispatch({ type: 'setSelection', selection: undefined });
@@ -51,7 +60,9 @@ export const Select = () => {
         type: 'updateItem',
         index: item.current.index,
         item: {
-          pathData: item.current.pathData,
+          segments: _.map(item.current.segments, (segment) => {
+            return [segment.point.x, segment.point.y];
+          }),
         },
       });
     }

@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { PaperEvent } from '../data';
+import { PaperMouseEvent } from '../data';
 
 type Data = {
   center: paper.PointLike;
@@ -53,7 +53,7 @@ const getState = (view: paper.View, prev: Data, next: Data): State => {
 export const usePinch = () => {
   const pinch = useRef<Data | null>(null);
 
-  const mouseDrag = useCallback(({ event, tool }: PaperEvent) => {
+  const mouseDrag = useCallback(({ event, tool }: PaperMouseEvent) => {
     const touchEvent = event as unknown as TouchEvent;
     const next = getData(touchEvent, tool.view);
     if (pinch.current) {

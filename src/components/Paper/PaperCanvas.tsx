@@ -11,6 +11,7 @@ import { CanvasProps, Canvas as PaperCanvas, View } from 'react-paper-bindings';
 import _ from 'lodash';
 import { Context } from './context';
 import { Image, ImageLayer } from './image';
+import { ItemLayer } from './items/ItemLayer';
 import { Tool } from './tools';
 
 type Props = CanvasProps & {
@@ -25,7 +26,7 @@ export const Canvas = forwardRef<HTMLCanvasElement | null, Props>(
   function Canvas({ image, width, height, ...other }, forwardedRef) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const value = useContext(Context);
-    const [, dispatch] = value;
+    const [state, dispatch] = value;
 
     const handleScopeReady = useCallback(
       (scope: paper.PaperScope) => {
@@ -64,6 +65,7 @@ export const Canvas = forwardRef<HTMLCanvasElement | null, Props>(
         <Context.Provider value={value}>
           <View>
             <ImageLayer image={image} />
+            <ItemLayer items={state.data} />
           </View>
           {_.keys(Tool).map((tool: any) => {
             // @ts-ignore

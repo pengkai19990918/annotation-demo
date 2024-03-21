@@ -1,7 +1,7 @@
+import _ from 'lodash';
 import { useCallback, useRef } from 'react';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
-import { ItemName } from '../items';
 import { ToolName } from './types';
 import { useMouseWheel } from './utils';
 import { createItem, defaultProps } from './utils/item';
@@ -34,7 +34,6 @@ export const Rectangle = () => {
           path.current.segments[1].point.x = event.point.x;
           path.current.segments[2].point = event.point;
           path.current.segments[3].point.y = event.point.y;
-          // path.current.add(event.point);
         }
       }
     },
@@ -43,11 +42,13 @@ export const Rectangle = () => {
 
   const handleMouseUp = useCallback(() => {
     if (state.image && path.current) {
-      path.current.simplify(10);
+      // path.current.simplify(10);
       dispatch({
         type: 'addItem',
-        item: createItem(ItemName.Path, {
-          pathData: path.current.pathData,
+        item: createItem(NAME as any, {
+          segments: _.map(path.current.segments, (segment) => {
+            return [segment.point.x, segment.point.y];
+          }),
         }),
       });
       path.current.remove();

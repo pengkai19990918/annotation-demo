@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+// import { useCallback } from 'react';
 import { Path as PaperPath } from 'react-paper-bindings';
 
 type Props = {
@@ -9,26 +9,29 @@ type Props = {
   strokeColor?: string;
   strokeScaling?: boolean;
   strokeWidth?: number;
+  type?: string;
+  segments?: number[][];
+  closed?: boolean;
 };
 
 export const Path = (props: Props) => {
-  const handleMouseEnter = useCallback(() => {
-    if (document.body) {
-      document.body.style.cursor = 'pointer';
-    }
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    if (document.body) {
-      document.body.style.cursor = 'auto';
-    }
-  }, []);
+  // const handleMouseEnter = useCallback(() => {
+  //   if (document.body) {
+  //     document.body.style.cursor = 'pointer';
+  //   }
+  // }, []);
+  //
+  // const handleMouseLeave = useCallback(() => {
+  //   if (document.body) {
+  //     document.body.style.cursor = 'auto';
+  //   }
+  // }, []);
 
   return (
     <PaperPath
       {...props}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      // onMouseEnter={handleMouseEnter}
+      // onMouseLeave={handleMouseLeave}
     />
   );
 };

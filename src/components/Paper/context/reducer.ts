@@ -11,6 +11,7 @@ export type State = {
   image?: Image;
   history: Image[];
   historyIndex: number;
+  data: ItemData[];
   routeIndex: number;
   selection: Selection;
   tool: ToolName;
@@ -42,21 +43,26 @@ export const initialState: State = {
   history: [],
   historyIndex: 0,
   routeIndex: 0,
+  data: [],
   selection: undefined,
   tool: ToolName.Move,
   zoom: 1,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const updateHistory = (state: State, spec: Spec<Item[]>) => {
-  // const current = state.history[state.historyIndex];
-  // const image = update<Image>(current, {
-  //   routes: { [state.routeIndex]: { items: spec } },
-  // });
-  // const historyIndex = state.historyIndex + 1;
-  // const history = [...state.history.slice(0, historyIndex), image];
-  // return update(state, { $merge: { history, historyIndex } });
-  return update(state, { $merge: {} });
+// const updateHistory = (state: State, spec: Spec<Item[]>) => {
+//   const current = state.history[state.historyIndex];
+//   const image = update<Image>(current, {
+//     routes: { [state.routeIndex]: { items: spec } },
+//   });
+//
+//   const historyIndex = state.historyIndex + 1;
+//   const history = [...state.history.slice(0, historyIndex), image];
+//   return update(state, { $merge: { history, historyIndex } });
+// };
+
+const updateData = (state: State, spec: Spec<ItemData[]>) => {
+  const data = update(state.data, spec);
+  return update(state, { $merge: { data } });
 };
 
 export const reducer = (state: State, action: Action): State => {
@@ -109,17 +115,17 @@ export const reducer = (state: State, action: Action): State => {
       });
     }
     case 'addItem': {
-      return updateHistory(state, {
+      return updateData(state, {
         $push: [action.item],
       });
     }
     case 'updateItem': {
-      return updateHistory(state, {
+      return updateData(state, {
         [action.index]: { $merge: action.item },
       });
     }
     case 'removeItem': {
-      return updateHistory(state, {
+      return updateData(state, {
         $splice: [[action.index, 1]],
       });
     }

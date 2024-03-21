@@ -10,8 +10,8 @@ export const fitImage = (view: paper.View, image: Image) => {
   const x = (vs.width - iw) / 2 / zoom;
   const y = (vs.height - ih) / 2 / zoom;
   view.scale(zoom / view.zoom);
-  view.translate(
-    x - view.matrix.tx / view.zoom,
-    y - view.matrix.ty / view.zoom,
-  );
+  view.translate({
+    x: x - view.matrix.tx / view.zoom,
+    y: y - view.matrix.ty / view.zoom,
+  });
 };

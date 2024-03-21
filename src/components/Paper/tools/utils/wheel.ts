@@ -4,7 +4,10 @@ import { ToolName } from '../types';
 
 const ZOOM_RATIO = 1.1;
 
-export const useMouseWheel = (tool: ToolName) => {
+export const useMouseWheel = (
+  tool: ToolName,
+  callback?: (newZoom: number, viewZoom: number) => void,
+) => {
   const [state, dispatch] = usePaper();
 
   const handleMouseWheel = useCallback(
@@ -26,6 +29,7 @@ export const useMouseWheel = (tool: ToolName) => {
       );
       // transform view
       view.scale(newZoom, center);
+      callback?.(newZoom, view.zoom);
       // dispatch new zoom
       dispatch({ type: 'setZoom', zoom: view.zoom });
     },

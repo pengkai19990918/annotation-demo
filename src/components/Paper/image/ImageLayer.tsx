@@ -15,7 +15,12 @@ export const ImageLayer = ({ image }: Props) => {
   const handleImageLoad = useCallback(
     (raster: paper.Raster) => {
       if (raster && raster.view) {
-        raster.fitBounds(0, 0, image.width, image.height);
+        raster.fitBounds({
+          x: 0,
+          y: 0,
+          width: image.width,
+          height: image.height,
+        });
         fitImage(raster.view, image);
         dispatch({ type: 'setImage', image });
       }
