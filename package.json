@@ -21,12 +21,14 @@
     "react-paper-bindings": "git+git@github.com:pengkai19990918/react-paper-marker.git",
     "react-reconciler": "^0.29.0",
     "react-use-measure": "^2.1.1",
+    "tinycolor2": "^1.6.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/tinycolor": "^1.1.27",
     "@types/uuid": "^9.0.8",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",

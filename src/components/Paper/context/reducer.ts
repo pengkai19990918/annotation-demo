@@ -2,6 +2,7 @@ import update, { Spec } from 'immutability-helper';
 import { Image } from '../image';
 import { Item, ItemData } from '../items';
 import { ToolName } from '../tools/types';
+import React from 'react';
 
 export type Selection = string | undefined;
 
