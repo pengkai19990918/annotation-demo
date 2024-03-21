@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const ItemLayer = ({ items }: Props) => {
-  const [state, dispatch] = usePaper();
+  const [state,] = usePaper();
 
   return (
     <Layer id={'itemLayer'} visible={!!state.image}>
