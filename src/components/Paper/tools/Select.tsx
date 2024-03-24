@@ -39,6 +39,16 @@ export const Select = () => {
   const itemHover = (hitItem: paper.Item | undefined) => {
     if (hitItem) {
 
+      if (hoverItem.current && hoverItem.current.props.id !== hitItem.props.id) {
+        const anchors = hoverItem.current.parent.getItems({
+          itemType: TItemType.ANCHOR,
+        });
+
+        _.forEach(anchors, (anchor) => {
+          anchor.visible = false;
+        });
+      }
+
       hoverItem.current = hitItem;
 
       if (hitItem.parent.className === TItemType.GROUP) {
@@ -101,6 +111,7 @@ export const Select = () => {
   }) => {
     const { currentItem, index, point } = options;
 
+    // 根据某个锚点的位置修改其他锚点的位置
     if (index === 0) {
       currentItem.segments[1].point.y = point.y;
       currentItem.segments[2].point.x = point.x;
@@ -158,7 +169,6 @@ export const Select = () => {
       }).position.set(currentItem.segments[2].point);
     }
     currentItem.segments[index].point.set(point);
-
   }
 
 
@@ -264,7 +274,7 @@ export const Select = () => {
     if (item.current && changed.current) {
       dispatch({
         type: 'updateItem',
-        index: item.current.index,
+        id: item.current.props.id,
         item: {
           segments: _.map(item.current.segments, (segment) => {
             return [segment.point.x, segment.point.y];

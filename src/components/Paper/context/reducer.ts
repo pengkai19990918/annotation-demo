@@ -3,6 +3,7 @@ import { Image } from '../image';
 import { Item, ItemData } from '../items';
 import { ToolName } from '../tools/types';
 import React from 'react';
+import _ from 'lodash';
 
 export type Selection = string | undefined;
 
@@ -27,7 +28,7 @@ export type Action =
   | { type: 'setSelection'; selection: Selection }
   | { type: 'setZoom'; zoom: number }
   | { type: 'addItem'; item: Item }
-  | { type: 'updateItem'; item: ItemData; index: number }
+  | { type: 'updateItem'; item: ItemData; id: string }
   | { type: 'removeItem'; index: number }
   | { type: 'undo' }
   | { type: 'redo' }
@@ -121,8 +122,13 @@ export const reducer = (state: State, action: Action): State => {
       });
     }
     case 'updateItem': {
+      const index = _.findIndex(state.data, ['id', action.id]);
+
+      if (index === -1) {
+        return state;
+      }
       return updateData(state, {
-        [action.index]: { $merge: action.item },
+        [index]: { $merge: action.item },
       });
     }
     case 'removeItem': {
