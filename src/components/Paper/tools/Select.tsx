@@ -1,5 +1,4 @@
 import { useCallback, useRef } from 'react';
-//import { Path, PathItem } from "paper/dist/paper-core";
 import _ from 'lodash';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
@@ -7,11 +6,15 @@ import { ToolName } from './types';
 import { useMouseWheel } from './utils';
 import { TItemType } from '@/components/Paper/enums';
 
-
-type TBaseItem = paper.Item & { itemType?: string;}
+interface TBaseItem extends paper.Item {
+  itemType?: string;
+  props?: any;
+  type?: string;
+  segments?: any;
+}
 
 type TNowItem = {
-  item: TBaseItem
+  item: TBaseItem,
 }
 
 
@@ -85,7 +88,102 @@ export const Select = () => {
 
       return;
     }
+  };
+
+  /**
+   * @description 修改矩形锚点位置
+   * @param options
+   * */
+  const changeRectangle = (options: {
+    currentItem: TBaseItem,
+    index: number,
+    point: paper.Point
+  }) => {
+    const { currentItem, index, point } = options;
+
+    if (index === 0) {
+      currentItem.segments[1].point.y = point.y;
+      currentItem.segments[2].point.x = point.x;
+
+      currentItem.parent.getItem({
+        itemType: TItemType.ANCHOR,
+        data: { index: 1 },
+      }).position.set(currentItem.segments[1].point);
+
+      currentItem.parent.getItem({
+        itemType: TItemType.ANCHOR,
+        data: { index: 2 },
+      }).position.set(currentItem.segments[2].point);
+
+    } else if (index === 1) {
+      currentItem.segments[0].point.y = point.y;
+      currentItem.segments[2].point.x = point.x;
+
+      currentItem.parent.getItem({
+        itemType: TItemType.ANCHOR,
+        data: { index: 0 },
+      }).position.set(currentItem.segments[0].point);
+
+      currentItem.parent.getItem({
+        itemType: TItemType.ANCHOR,
+        data: { index: 2 },
+      }).position.set(currentItem.segments[2].point);
+
+    } else if (index === 2) {
+      currentItem.segments[1].point.x = point.x;
+      currentItem.segments[3].point.y = point.y;
+
+      currentItem.parent.getItem({
+        itemType: TItemType.ANCHOR,
+        data: { index: 1 },
+      }).position.set(currentItem.segments[1].point);
+
+      currentItem.parent.getItem({
+        itemType: TItemType.ANCHOR,
+        data: { index: 3 },
+      }).position.set(currentItem.segments[3].point);
+
+    } else if (index === 3) {
+      currentItem.segments[0].point.x = point.x;
+      currentItem.segments[2].point.y = point.y;
+
+      currentItem.parent.getItem({
+        itemType: TItemType.ANCHOR,
+        data: { index: 0 },
+      }).position.set(currentItem.segments[0].point);
+
+      currentItem.parent.getItem({
+        itemType: TItemType.ANCHOR,
+        data: { index: 2 },
+      }).position.set(currentItem.segments[2].point);
+    }
+    currentItem.segments[index].point.set(point);
+
   }
+
+
+  /**
+   * @description 根据item类型修改item
+   * @param options
+   * */
+  const changeItem = (options: {
+    currentItem: TBaseItem,
+    index: number,
+    point: paper.Point
+  }) => {
+    const { currentItem, index, point } = options;
+
+    switch (currentItem.props.type) {
+      case ToolName.Polygon:
+        currentItem?.segments[index].point.set(point);
+        break;
+      case ToolName.Rectangle:
+        changeRectangle(options);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleMouseDown = useCallback(
     (event: paper.ToolEvent) => {
@@ -94,7 +192,7 @@ export const Select = () => {
           fill: true,
           segments: false,
           stroke: true,
-          tolerance: 10,
+          tolerance: 10 / state.scope.view.zoom,
         });
 
         if (hit && hit.item) {
@@ -126,24 +224,35 @@ export const Select = () => {
         fill: true,
         segments: false,
         stroke: true,
-        tolerance: 10,
+        tolerance: 10 / state.scope.view.zoom,
       });
       const hitItem = getCurrentItem(hit);
       itemHover(hitItem);
     }
-  }, [state.scope, state.selection, dispatch])
+  }, [state.scope, state.selection, dispatch]);
 
   const handleMouseDrag = useCallback((event: paper.ToolEvent) => {
     if (selectItem.current && point.current) {
 
       if (selectItem.current.itemType === TItemType.PATH) {
+
         selectItem.current.parent.translate(event.point.subtract(point.current));
         changed.current = true;
         point.current = event.point;
+
       } else if (selectItem.current.itemType === TItemType.ANCHOR) {
+        if (!item.current) {
+          return;
+        }
         const translate = event.point.subtract(point.current);
         selectItem.current.translate(translate);
-        item.current?.segments[selectItem.current.data.index].point.set(selectItem.current?.position)
+
+        changeItem({
+          currentItem: item.current,
+          index: selectItem.current.data.index,
+          point: selectItem.current.position,
+        });
+
         changed.current = true;
         point.current = event.point;
       }

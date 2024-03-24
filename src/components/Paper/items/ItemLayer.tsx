@@ -6,6 +6,7 @@ import { Path } from './Path';
 import { ToolName } from '@/components/Paper/tools';
 import { Polygon } from '@/components/Paper/items/Polygon';
 import { TItemType } from '@/components/Paper/enums';
+import { Rectangle } from '@/components/Paper/items/Rectangle';
 
 type Props = {
   items: ItemData[];
@@ -29,6 +30,14 @@ export const ItemLayer = ({ items }: Props) => {
               closed={true}
             />
           );
+        } else if (item.type === ToolName.Rectangle) {
+          return (
+            <Rectangle
+              key={item.id}
+              {...item}
+              closed={true}
+            />
+          )
         }
         return (
           <Path
