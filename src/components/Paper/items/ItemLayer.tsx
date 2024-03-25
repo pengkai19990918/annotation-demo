@@ -7,6 +7,7 @@ import { ToolName } from '@/components/Paper/tools';
 import { Polygon } from '@/components/Paper/items/Polygon';
 import { TItemType } from '@/components/Paper/enums';
 import { Rectangle } from '@/components/Paper/items/Rectangle';
+import { Line } from '@/components/Paper/items/Line';
 
 type Props = {
   items: ItemData[];
@@ -36,6 +37,14 @@ export const ItemLayer = ({ items }: Props) => {
               key={item.id}
               {...item}
               closed={true}
+            />
+          )
+        } else if (item.type === ToolName.Line) {
+          return (
+            <Line
+              key={item.id}
+              {...item}
+              closed={false}
             />
           )
         }

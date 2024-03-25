@@ -5,6 +5,7 @@ import { Pen } from './Pen';
 import { Polygon } from './Polygon';
 import { Rectangle } from './Rectangle';
 import { Select } from './Select';
+import { Line } from '@/components/Paper/tools/Line';
 
 export * from './types';
 
@@ -16,4 +17,5 @@ export const Tool = {
   Select,
   Rectangle,
   Polygon,
+  Line
 };

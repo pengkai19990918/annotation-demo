@@ -36,7 +36,7 @@ export const Select = () => {
    * @param hitItem
    * @returns void
    * */
-  const itemHover = (hitItem: paper.Item | undefined) => {
+  const itemHover = (hitItem: TBaseItem | undefined) => {
     if (hitItem) {
 
       if (hoverItem.current && hoverItem.current.props.id !== hitItem.props.id) {
@@ -184,6 +184,7 @@ export const Select = () => {
     const { currentItem, index, point } = options;
 
     switch (currentItem.props.type) {
+      case ToolName.Line:
       case ToolName.Polygon:
         currentItem?.segments[index].point.set(point);
         break;

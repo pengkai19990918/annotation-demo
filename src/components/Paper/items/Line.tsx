@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Circle, Group, Path as PaperPath } from 'react-paper-bindings';
 import { Context } from '@/components/Paper/context';
-import { useContext, useState, useCallback } from 'react';
+import { useContext, useCallback } from 'react';
 import tinycolor from "tinycolor2";
 import { TItemType } from '@/components/Paper/enums';
 
@@ -20,7 +20,7 @@ type Props = {
   // [key in string]: any;
 };
 
-export const Polygon = (props: Props) => {
+export const Line = (props: Props) => {
   const { color = '#00ff00' } = props;
 
   const handleMouseEnter = useCallback(() => {
@@ -44,7 +44,8 @@ export const Polygon = (props: Props) => {
     >
       <PaperPath
         {...props}
-        fillColor={tinycolor(color).setAlpha(0.01).toRgbString()}
+        // fillColor={tinycolor(color).setAlpha(0.01).toRgbString()}
+        fillColor={null}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         itemType={TItemType.PATH}

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { TOOL_TYPE_ARR, ToolName } from '../tools';
 import { Context } from './../context';
 
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 
 const Toolbar: React.FC<any> = () => {
   const options = _.map(TOOL_TYPE_ARR, (toolType) => {
