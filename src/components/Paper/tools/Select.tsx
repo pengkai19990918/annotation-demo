@@ -273,15 +273,25 @@ export const Select = () => {
 
   const handleMouseUp = useCallback(() => {
     if (item.current && changed.current) {
-      dispatch({
-        type: 'updateItem',
-        id: item.current.props.id,
-        item: {
-          segments: _.map(item.current.segments, (segment) => {
-            return [segment.point.x, segment.point.y];
-          }),
-        },
-      });
+      if (item.current.props.type === ToolName.Point) {
+        dispatch({
+          type: 'updateItem',
+          id: item.current.props.id,
+          item: {
+            segments: [[item.current.position.x, item.current.position.y]],
+          },
+        });
+      } else {
+        dispatch({
+          type: 'updateItem',
+          id: item.current.props.id,
+          item: {
+            segments: _.map(item.current.segments, (segment) => {
+              return [segment.point.x, segment.point.y];
+            }),
+          },
+        });
+      }
     }
     changed.current = false;
     point.current = undefined;

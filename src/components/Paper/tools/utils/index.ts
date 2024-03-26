@@ -8,13 +8,11 @@ type handleMouseButtonReturn =
   | 'MouseMiddle'
   | 'MouseRight'
   | 'Unknown';
+
 // 兼容各主流浏览器的事件处理函数
 export function handleMouseButton(event: MouseEvent): handleMouseButtonReturn {
   // 根据不同浏览器获取button值
-  const button =
-    typeof event.button === 'number'
-      ? event.button
-      : event.which || event.button;
+  const button = event.button;
   // 判断按键
   switch (button) {
     case 0: // 左键

@@ -6,7 +6,8 @@ import { Pen } from './Pen';
 import { Polygon } from './Polygon';
 import { Rectangle } from './Rectangle';
 import { Select } from './Select';
-import { Line } from '@/components/Paper/tools/Line';
+import { Line } from './Line';
+import { Point } from './Point';
 
 export type IPlainObject<T> = Record<string, T>;
 
@@ -29,6 +30,7 @@ export enum ToolName {
   Rectangle = 'Rectangle',
   Polygon = 'Polygon',
   Line = 'Line',
+  Point = 'Point',
 }
 
 export interface IToolNameModel extends IEnum {
@@ -68,6 +70,10 @@ export const TOOL_TYPE: IPlainObject<IToolNameModel> = {
     code: ToolName.Line,
     name: 'Line',
   },
+  [ToolName.Point]: {
+    code: ToolName.Point,
+    name: 'Point',
+  },
 };
 
 export const TOOL_TYPE_ARR: IToolNameModel[] = _.values(TOOL_TYPE);
@@ -81,3 +87,4 @@ export type ToolType =
   | typeof Rectangle
   | typeof Polygon
   | typeof Line
+  | typeof Point;
