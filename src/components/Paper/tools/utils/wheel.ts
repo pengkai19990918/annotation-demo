@@ -10,6 +10,7 @@ export const useMouseWheel = (
 ) => {
   const [state, dispatch] = usePaper();
 
+
   const handleMouseWheel = useCallback(
     (event: WheelEvent) => {
       if (!state.scope) return;

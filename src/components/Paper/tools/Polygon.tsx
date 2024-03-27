@@ -11,6 +11,7 @@ import {
 } from './utils';
 import { createItem, defaultProps } from './utils/item';
 import _ from 'lodash';
+import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
 
 const NAME = ToolName.Polygon;
 
@@ -21,7 +22,10 @@ export const Polygon = () => {
   const dashPathLine = useRef<paper.Path>();
   const currentCircles = useRef<paper.Path.Circle[]>([]);
 
+  const { drawCrossLine } = useCrossLine();
+
   useMouseWheel(NAME, (newZoom) => {
+    drawCrossLine();
     if (currentCircles.current.length > 0) {
       // 缩放锚点 保持锚点大小不变（视觉大小）
       currentCircles.current.forEach((circle) => {
@@ -29,6 +33,7 @@ export const Polygon = () => {
       });
     }
   });
+
 
   /**
    * @description 删除多边形最后点与鼠标坐标之间的连线
@@ -225,6 +230,9 @@ export const Polygon = () => {
 
   const handleMouseMove = useCallback(
     (event: paper.ToolEvent) => {
+
+      drawCrossLine(event.point);
+
       if (state.scope && path.current) {
         removeCurrentPathLine();
         currentPathLine.current = createCurrentPathLine([path.current.lastSegment.point, event.point]);
@@ -235,7 +243,7 @@ export const Polygon = () => {
         }
       }
     },
-    [state.scope],
+    [state.scope, state.image],
   );
 
   const handleMouseDrag = useCallback(() => {}, [state.scope]);
