@@ -8,6 +8,7 @@ type Props = {
 
 export const PaperProvider = ({ children }: Props) => {
   const value = useReducer<Reducer>(reducer, initialState);
+
   return (
     <PaperContext.Provider value={value}>{children}</PaperContext.Provider>
   );

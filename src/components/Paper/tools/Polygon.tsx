@@ -1,4 +1,6 @@
-import { useCallback, useRef } from 'react';
+import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
+import _ from 'lodash';
+import { useCallback, useEffect, useRef } from 'react';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
 import { PaperKeyEvent, PaperMouseEvent } from './data';
@@ -10,8 +12,6 @@ import {
   useMouseWheel,
 } from './utils';
 import { createItem, defaultProps } from './utils/item';
-import _ from 'lodash';
-import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
 
 const NAME = ToolName.Polygon;
 
@@ -77,6 +77,14 @@ export const Polygon = () => {
     }
   };
 
+
+  useEffect(() => {
+    removePath();
+    removeCurrentPathLine();
+    removeDashPathLine();
+    removeCurrentCircles();
+  }, [state.data]);
+
   /**
    * @description 多边形路径
    * @param segments
@@ -92,7 +100,7 @@ export const Polygon = () => {
         segments,
       });
     }
-  }
+  };
 
   /**
    * @description 鼠标坐标与最后点坐标之间的虚线
@@ -100,16 +108,19 @@ export const Polygon = () => {
    * @param itemProps
    * @returns Path | undefined
    */
-  const createCurrentPathLine = (segments: [paper.Point, paper.Point], itemProps = {}) => {
+  const createCurrentPathLine = (
+    segments: [paper.Point, paper.Point],
+    itemProps = {},
+  ) => {
     if (state.scope) {
       return new state.scope.Path({
         insert: true,
         ...defaultProps,
         ...itemProps,
-        segments
+        segments,
       });
     }
-  }
+  };
 
   /**
    * @description 鼠标坐标与起始点坐标之间的虚线
@@ -117,17 +128,20 @@ export const Polygon = () => {
    * @param itemProps
    * @returns Path | undefined
    */
-  const createDashPathLine = (segments: [paper.Point, paper.Point], itemProps = {}) => {
+  const createDashPathLine = (
+    segments: [paper.Point, paper.Point],
+    itemProps = {},
+  ) => {
     if (state.scope) {
       return new state.scope.Path({
         dashArray: [10, 5],
         insert: true,
         ...defaultProps,
         ...itemProps,
-        segments
+        segments,
       });
     }
-  }
+  };
 
   /**
    * @description 创建多边形锚点
@@ -135,9 +149,12 @@ export const Polygon = () => {
    * @param itemProps
    * @returns Circle | undefined
    * */
-  const createCircle = (center: paper.Point, itemProps = {
-    radius: 5,
-  }) => {
+  const createCircle = (
+    center: paper.Point,
+    itemProps = {
+      radius: 5,
+    },
+  ) => {
     if (state.scope) {
       const inputRadius = itemProps.radius / state.scope.view.zoom;
       return new state.scope.Path.Circle({
@@ -145,10 +162,10 @@ export const Polygon = () => {
         ...defaultProps,
         ...itemProps,
         radius: inputRadius,
-        center
+        center,
       });
     }
-  }
+  };
 
   /**
    * @description 保存多边形数据
@@ -158,22 +175,18 @@ export const Polygon = () => {
       path.current.closed = true;
 
       if (state.image) {
-        // path.current.simplify(10);        
+        // path.current.simplify(10);
         dispatch({
           type: 'addItem',
           item: createItem(NAME as any, {
             segments: _.map(path.current.segments, (segment) => {
-              return [segment.point.x, segment.point.y]
+              return [segment.point.x, segment.point.y];
             }),
           }),
         });
       }
-      removePath();
-      removeCurrentPathLine();
-      removeDashPathLine();
-      removeCurrentCircles();
     }
-  }
+  };
 
   const handleMouseDown = useCallback(
     (e: PaperMouseEvent) => {
@@ -187,18 +200,16 @@ export const Polygon = () => {
 
       if (isMouseLeft(event)) {
         if (state.scope) {
-
           if (!path.current) {
             path.current = createPath([e.point]);
-            const currentCircle =  createCircle(e.point);
+            const currentCircle = createCircle(e.point);
 
             if (currentCircle) {
               currentCircles.current.push(currentCircle);
             }
-
           } else {
             path.current.add(e.point);
-            const currentCircle =  createCircle(e.point);
+            const currentCircle = createCircle(e.point);
 
             if (currentCircle) {
               currentCircles.current.push(currentCircle);
@@ -220,7 +231,10 @@ export const Polygon = () => {
             path.current.lastSegment.remove();
             currentCircles.current.pop()?.remove();
             removeCurrentPathLine();
-            currentPathLine.current = createCurrentPathLine([path.current.lastSegment.point, e.point]);
+            currentPathLine.current = createCurrentPathLine([
+              path.current.lastSegment.point,
+              e.point,
+            ]);
           }
         }
       }
@@ -230,30 +244,40 @@ export const Polygon = () => {
 
   const handleMouseMove = useCallback(
     (event: paper.ToolEvent) => {
-
       drawCrossLine(event.point);
 
       if (state.scope && path.current) {
         removeCurrentPathLine();
-        currentPathLine.current = createCurrentPathLine([path.current.lastSegment.point, event.point]);
+        currentPathLine.current = createCurrentPathLine([
+          path.current.lastSegment.point,
+          event.point,
+        ]);
 
         if (path.current.segments.length > 1) {
           removeDashPathLine();
-          dashPathLine.current = createDashPathLine([path.current.firstSegment.point, event.point]);
+          dashPathLine.current = createDashPathLine([
+            path.current.firstSegment.point,
+            event.point,
+          ]);
         }
       }
     },
     [state.scope, state.image],
   );
 
-  const handleMouseDrag = useCallback(() => {}, [state.scope]);
+  const handleMouseDrag = useCallback(
+    (event: paper.ToolEvent) => {
+      drawCrossLine(event.point);
+    },
+    [state.scope],
+  );
 
   const handleMouseUp = useCallback(() => {}, [dispatch, state.image]);
 
   const handleKeyDown = useCallback(
     (e: PaperKeyEvent) => {
       const { event } = e;
-    
+
       switch (event.key) {
         case 'n':
           savePath();

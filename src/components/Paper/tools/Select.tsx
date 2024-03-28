@@ -5,6 +5,7 @@ import { usePaper } from '../context';
 import { ToolName } from './types';
 import { useMouseWheel } from './utils';
 import { TItemType } from '@/components/Paper/enums';
+import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
 
 interface TBaseItem extends paper.Item {
   itemType?: string;
@@ -28,7 +29,10 @@ export const Select = () => {
   const hoverItem = useRef<TBaseItem>();
   const selectItem = useRef<TBaseItem>();
 
-  useMouseWheel(NAME);
+  const { drawCrossLine } = useCrossLine();
+  useMouseWheel(NAME, () => {
+    drawCrossLine();
+  });
 
 
   /**
@@ -230,6 +234,7 @@ export const Select = () => {
   );
 
   const handleMouseMove = useCallback((event: paper.ToolEvent) => {
+    drawCrossLine(event.point);
     if (state.scope) {
       const hit = state.scope.project.hitTest(event.point, {
         fill: true,
@@ -243,6 +248,7 @@ export const Select = () => {
   }, [state.scope, state.selection, dispatch]);
 
   const handleMouseDrag = useCallback((event: paper.ToolEvent) => {
+    drawCrossLine(event.point);
     if (selectItem.current && point.current) {
 
       if (selectItem.current.itemType === TItemType.PATH) {
@@ -269,7 +275,7 @@ export const Select = () => {
       }
 
     }
-  }, []);
+  }, [state.scope, state.image, state.selection, dispatch]);
 
   const handleMouseUp = useCallback(() => {
     if (item.current && changed.current) {

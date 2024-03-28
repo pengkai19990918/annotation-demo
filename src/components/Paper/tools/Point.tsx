@@ -3,13 +3,9 @@ import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
 import { PaperKeyEvent, PaperMouseEvent } from './data';
 import { ToolName } from './types';
-import {
-  StopMouseEvents,
-  isMouseLeft,
-  isMouseRight,
-  useMouseWheel,
-} from './utils';
+import { isMouseLeft, isMouseRight, StopMouseEvents, useMouseWheel } from './utils';
 import { createItem } from './utils/item';
+import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
 
 const NAME = ToolName.Point;
 
@@ -20,7 +16,11 @@ export const Point = () => {
   const [state, dispatch] = usePaper();
   const path = useRef<paper.Path>();
 
-  useMouseWheel(NAME);
+  const { drawCrossLine } = useCrossLine();
+
+  useMouseWheel(NAME, () => {
+    drawCrossLine();
+  });
 
   /**
    * @description 删除点
@@ -44,7 +44,7 @@ export const Point = () => {
         }),
       });
     }
-  }
+  };
 
   const handleMouseDown = useCallback(
     (e: PaperMouseEvent) => {
@@ -60,24 +60,31 @@ export const Point = () => {
         if (state.scope) {
           savePath(e);
         }
-      } else if (isMouseRight(event)) {}
+      } else if (isMouseRight(event)) {
+      }
     },
     [dispatch, state.selection, state.scope, state.image],
   );
 
   const handleMouseMove = useCallback(
-    () => {},
-    [state.scope],
+    (event: paper.ToolEvent) => {
+      drawCrossLine(event.point);
+    },
+    [state.scope, state.image],
   );
 
-  const handleMouseDrag = useCallback(() => {}, [state.scope]);
+  const handleMouseDrag = useCallback((event: paper.ToolEvent) => {
+      drawCrossLine(event.point);
+    },
+    [state.scope, state.image]);
 
-  const handleMouseUp = useCallback(() => {}, [dispatch, state.image]);
+  const handleMouseUp = useCallback(() => {
+  }, [dispatch, state.image]);
 
   const handleKeyDown = useCallback(
     (e: PaperKeyEvent) => {
       const { event } = e;
-    
+
       switch (event.key) {
         case 'n':
           break;

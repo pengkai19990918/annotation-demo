@@ -2,7 +2,6 @@ import { usePaper } from '@/components/Paper/context';
 import { useCallback, useEffect, useRef } from 'react';
 import { defaultProps } from '@/components/Paper/tools/utils/item';
 
-
 export const useCrossLine = () => {
   const [state, dispatch] = usePaper();
   const crossLineV = useRef<paper.Path.Line>();

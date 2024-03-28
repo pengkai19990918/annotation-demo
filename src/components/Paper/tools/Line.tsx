@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
 import { PaperKeyEvent, PaperMouseEvent } from './data';
@@ -11,6 +11,7 @@ import {
 } from './utils';
 import { createItem, defaultProps } from './utils/item';
 import _ from 'lodash';
+import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
 
 const NAME = ToolName.Line;
 
@@ -24,7 +25,11 @@ export const Line = () => {
   const currentPathLine = useRef<paper.Path>();
   const currentCircles = useRef<paper.Path.Circle[]>([]);
 
+  const { drawCrossLine } = useCrossLine();
+
+
   useMouseWheel(NAME, (newZoom) => {
+    drawCrossLine();
     if (currentCircles.current.length > 0) {
       // 缩放锚点 保持锚点大小不变（视觉大小）
       currentCircles.current.forEach((circle) => {
@@ -64,6 +69,13 @@ export const Line = () => {
       currentCircles.current.length = 0;
     }
   };
+
+
+  useEffect(() => {
+    removePath();
+    removeCurrentPathLine();
+    removeCurrentCircles();
+  }, [state.data]);
 
   /**
    * @description 线段路径
@@ -138,9 +150,6 @@ export const Line = () => {
           }),
         });
       }
-      removePath();
-      removeCurrentPathLine();
-      removeCurrentCircles();
     }
   }
 
@@ -196,15 +205,18 @@ export const Line = () => {
 
   const handleMouseMove = useCallback(
     (event: paper.ToolEvent) => {
+      drawCrossLine(event.point);
       if (state.scope && path.current) {
         removeCurrentPathLine();
         currentPathLine.current = createCurrentPathLine([path.current.lastSegment.point, event.point]);
       }
     },
-    [state.scope],
+    [state.scope, state.image],
   );
 
-  const handleMouseDrag = useCallback(() => {}, [state.scope]);
+  const handleMouseDrag = useCallback((event: paper.ToolEvent) => {
+    drawCrossLine(event.point);
+  }, [state.scope, state.image]);
 
   const handleMouseUp = useCallback(() => {}, [dispatch, state.image]);
 

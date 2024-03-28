@@ -1,5 +1,6 @@
+import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
 import _ from 'lodash';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
 import { ToolName } from './types';
@@ -12,16 +13,39 @@ export const Rectangle = () => {
   const [state, dispatch] = usePaper();
   const path = useRef<paper.Path>();
 
-  useMouseWheel(NAME);
+  const { drawCrossLine } = useCrossLine();
+
+  useMouseWheel(NAME, () => {
+    drawCrossLine();
+  });
+
+  const removePath = () => {
+    if (path.current) {
+      path.current.remove();
+      path.current = undefined;
+    }
+  }
+
+  useEffect(() => {
+    removePath();
+  }, [state.data]);
 
   const handleMouseDown = useCallback(() => {
     if (state.selection !== null) {
-      dispatch({ type: 'setSelection', selection: undefined });
+      dispatch({ type: 'setSelection', selection: undefined,});
     }
   }, [dispatch, state.selection]);
 
+  const handleMouseMove = useCallback(
+    (event: paper.ToolEvent) => {
+      drawCrossLine(event.point);
+    },
+    [state.scope, state.image],
+  );
+
   const handleMouseDrag = useCallback(
     (event: paper.ToolEvent) => {
+      drawCrossLine(event.point);
       if (state.scope) {
         if (!path.current) {
           path.current = new state.scope.Path({
@@ -49,10 +73,8 @@ export const Rectangle = () => {
           segments: _.map(path.current.segments, (segment) => {
             return [segment.point.x, segment.point.y];
           }),
-        }),
+        })
       });
-      path.current.remove();
-      path.current = undefined;
     }
   }, [dispatch, state.image]);
 
@@ -61,6 +83,7 @@ export const Rectangle = () => {
       name={NAME}
       active={state.tool === NAME}
       onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
       onMouseDrag={handleMouseDrag}
       onMouseUp={handleMouseUp}
     />
