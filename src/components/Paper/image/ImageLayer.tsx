@@ -14,6 +14,7 @@ export const ImageLayer = ({ image }: Props) => {
 
   const handleImageLoad = useCallback(
     (raster: paper.Raster) => {
+
       if (raster && raster.view) {
         raster.fitBounds({
           x: 0,
@@ -25,12 +26,12 @@ export const ImageLayer = ({ image }: Props) => {
         dispatch({ type: 'setImage', image });
       }
     },
-    [image, dispatch],
+    [image.url, dispatch],
   );
 
   return (
     <Layer id={image.id} visible={!!state.image}>
-      <Raster locked source={image.url} onLoad={handleImageLoad} />
+      {image.url && <Raster locked source={image.url} onLoad={handleImageLoad} />}
     </Layer>
   );
 };

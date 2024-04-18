@@ -16,9 +16,24 @@ export default defineConfig({
       redirect: '/home',
     },
     {
-      name: '首页',
+      name: '图片标注',
       path: '/home',
       component: './Home',
+    },
+    {
+      name: '点云标注',
+      path: '/point-cloud',
+      component: './PointCloud',
+    },
+    {
+      name: '标签树',
+      path: '/tag-tree',
+      component: './TagTree',
+    },
+    {
+      name: 'Chat',
+      path: '/chat',
+      component: './Chat',
     },
     {
       name: '权限演示',
