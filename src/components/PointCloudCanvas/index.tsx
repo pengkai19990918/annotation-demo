@@ -1,10 +1,19 @@
 import { PaperProvider } from '@/components/PointCloudCanvas/context/PointCloudProvider';
-import { Box, OrbitControls, Stats } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import { Vector3 } from 'three';
+import { Points, Stats } from '@react-three/drei';
+import { Canvas, useLoader } from '@react-three/fiber';
+import * as THREE from 'three';
+import { BINLoader } from './Loader/BINLoader';
 import './index.less';
+import Controls from './tools/Controls';
 
 const PointCloudCanvas = () => {
+  // const pcd = useLoader(PCDLoader, './data/pcd/000000.pcd');
+  const pcd: THREE.Points = useLoader(
+    BINLoader,
+    // 'https://anno.s3.bitiful.net/pcd/070070.bin',
+    './data/bin/000000.bin',
+  );
+
   return (
     <PaperProvider>
       <Canvas
@@ -23,13 +32,19 @@ const PointCloudCanvas = () => {
         //   return webgl1Render;
         // }}
         dpr={2}
+        onCreated={(state) => {
+          console.log(state);
+        }}
       >
         <color attach="background" args={['#000000']} />
         <axesHelper />
-        <OrbitControls enableDamping={false} enablePan enableRotate enableZoom />
-        <Box>
-          <meshBasicMaterial wireframe />
-        </Box>
+        <Controls />
+        {/* render pcd */}
+        <Points
+          positions={pcd.geometry.attributes.position.array as Float32Array}
+        >
+          <pointsMaterial color={new THREE.Color(0x3bff11)} size={0.01} />
+        </Points>
         <Stats />
       </Canvas>
     </PaperProvider>

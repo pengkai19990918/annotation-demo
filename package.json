@@ -1,6 +1,6 @@
 {
   "private": true,
-  "author": "彭家乐 <pengjiale@izaiqi.com>",
+  "author": "彭家乐",
   "scripts": {
     "build": "max build",
     "dev": "max dev",
@@ -15,11 +15,12 @@
     "@ant-design/pro-chat": "^1.12.2",
     "@ant-design/pro-components": "^2.6.49",
     "@react-three/drei": "^9.105.3",
-    "@react-three/fiber": "^8.16.1",
+    "@react-three/fiber": "^8.16.2",
     "@types/three": "^0.163.0",
     "@umijs/max": "^4.1.2",
     "antd": "^5.15.2",
     "antd-style": "^3.6.2",
+    "classnames": "^2.5.1",
     "dexie": "^4.0.1",
     "dexie-react-hooks": "^1.1.7",
     "immutability-helper": "^3.1.1",
@@ -28,11 +29,13 @@
     "react-paper-bindings": "git+git@github.com:pengkai19990918/react-paper-marker.git",
     "react-reconciler": "^0.29.0",
     "react-use-measure": "^2.1.1",
+    "tesseract.js": "^5.0.5",
     "three": "^0.163.0",
     "tinycolor2": "^1.6.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@react-three/eslint-plugin": "^0.1.1",
     "@types/lodash": "^4.17.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",

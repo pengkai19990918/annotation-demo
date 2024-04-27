@@ -60,7 +60,6 @@ const Player: React.FC<any> = (props) => {
     }
     setCurrentIndex(currentIndex + 1);
   };
-
   const sendRequest = (
     requestList: any[],
     limits: number,

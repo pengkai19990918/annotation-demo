@@ -1,3 +1,6 @@
 module.exports = {
-  extends: require.resolve('@umijs/max/eslint'),
+  "extends": [
+    "plugin:@react-three/recommended",
+    // require.resolve('@umijs/max/eslint')
+  ]
 };
