@@ -1,22 +1,21 @@
-import { useCrossLine } from '@/components/Paper/tools/hooks/useCrossLine';
-import _ from 'lodash';
-import { useCallback, useEffect, useRef } from 'react';
-import { Tool } from 'react-paper-bindings';
-import { usePaper } from '../context';
-import { ToolName } from './types';
-import { useMouseWheel } from './utils';
-import { createItem, defaultProps } from './utils/item';
+import _ from "lodash";
+import { useCallback, useEffect, useRef } from "react";
+import { usePaper } from "../../context";
+import { defaultProps } from "../utils";
+import { useCrossLine } from "./useCrossLine";
+import { useMouseWheel } from "./useMouseWheel";
+import { ToolName } from '@/components/Paper/tools';
 
-const NAME = ToolName.Rectangle;
 
-export const Rectangle = () => {
+export function useRectangle() {
 
+  
   const [state, dispatch] = usePaper();
   const path = useRef<paper.Path>();
 
   const { drawCrossLine } = useCrossLine();
 
-  useMouseWheel(NAME,(newZoom, center) => {
+  useMouseWheel(ToolName.Rectangle,(newZoom, center) => {
     drawCrossLine(center);
   });
 
@@ -68,40 +67,25 @@ export const Rectangle = () => {
 
   const handleMouseUp = useCallback(() => {
     if (state.image && path.current) {
-      console.log(path.current.parent.children);
+      return path.current;
 
-      // const intersectsPath = path.current.parent.children.filter((child) => {
-
-      //   return child !== path.current && child.intersects(path.current);
+      // dispatch({
+      //   type: 'addItem',
+      //   item: createItem(NAME as any, {
+      //     color: path.current.strokeColor?.toCSS(true),
+      //     segments: _.map(path.current.segments, (segment) => {
+      //       return [segment.point.x, segment.point.y];
+      //     }),
+      //   }),
       // });
-
-      // console.log(intersectsPath);
-      if (state.tool === NAME) {
-        // path.current.remove();
-        // path.current = undefined;
-        // return [];
-      }
-
-      dispatch({
-        type: 'addItem',
-        item: createItem(NAME as any, {
-          color: path.current.strokeColor?.toCSS(true),
-          segments: _.map(path.current.segments, (segment) => {
-            return [segment.point.x, segment.point.y];
-          }),
-        }),
-      });
     }
   }, [dispatch, state.image, state.tool]);
+  
 
-  return (
-    <Tool
-      name={NAME}
-      active={state.tool === NAME}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseDrag={handleMouseDrag}
-      onMouseUp={handleMouseUp}
-    />
-  );
-};
+  return {
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseDrag,
+    handleMouseUp,
+  }
+}

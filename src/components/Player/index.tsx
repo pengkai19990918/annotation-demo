@@ -1,9 +1,4 @@
-import {
-  CaretLeftOutlined,
-  CaretRightOutlined,
-  LoadingOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { CaretLeftOutlined, CaretRightOutlined, LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { Flex, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { db } from './db';
@@ -20,13 +15,15 @@ async function addFile(url: string, data: any) {
       url: url,
       data: data,
     });
-  } catch (error) {}
+  } catch (error) {
+  }
 }
 
 async function getFile(url: string) {
   try {
     return await db.file.get(url);
-  } catch (error) {}
+  } catch (error) {
+  }
 }
 
 /**
@@ -96,7 +93,7 @@ const Player: React.FC<any> = (props) => {
       } finally {
         sendNextRequest(); // 处理下一个请求
       }
-    }
+    };
     for (let i = 0; i < limits; i++) {
       sendNextRequest(); // 启动请求队列处理
     }
@@ -150,7 +147,7 @@ const Player: React.FC<any> = (props) => {
                   borderRadius: '5px',
                   textAlign: 'center',
                   cursor: 'pointer',
-                  background: currentIndex === index ? 'yellow' : ''
+                  background: currentIndex === index ? 'yellow' : '',
                 }}
                 onClick={() => {
                   setCurrentIndex(index);

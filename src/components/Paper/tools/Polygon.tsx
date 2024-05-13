@@ -1,4 +1,4 @@
-import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
+import { useCrossLine } from '@/components/Paper/tools/hooks/useCrossLine';
 import _ from 'lodash';
 import { useCallback, useEffect, useRef } from 'react';
 import { Tool } from 'react-paper-bindings';
@@ -12,6 +12,7 @@ import {
   useMouseWheel,
 } from './utils';
 import { createItem, defaultProps } from './utils/item';
+import { circleDefaultProps } from '../common/constant';
 
 const NAME = ToolName.Polygon;
 
@@ -24,8 +25,8 @@ export const Polygon = () => {
 
   const { drawCrossLine } = useCrossLine();
 
-  useMouseWheel(NAME, (newZoom) => {
-    drawCrossLine();
+  useMouseWheel(NAME, (newZoom, center) => {
+    drawCrossLine(center);
     if (currentCircles.current.length > 0) {
       // 缩放锚点 保持锚点大小不变（视觉大小）
       currentCircles.current.forEach((circle) => {
@@ -33,7 +34,6 @@ export const Polygon = () => {
       });
     }
   });
-
 
   /**
    * @description 删除多边形最后点与鼠标坐标之间的连线
@@ -76,7 +76,6 @@ export const Polygon = () => {
       currentCircles.current.length = 0;
     }
   };
-
 
   useEffect(() => {
     removePath();
@@ -151,15 +150,16 @@ export const Polygon = () => {
    * */
   const createCircle = (
     center: paper.Point,
-    itemProps = {
+    itemProps: any = {
       radius: 5,
     },
   ) => {
     if (state.scope) {
-      const inputRadius = itemProps.radius / state.scope.view.zoom;
+      const inputRadius = circleDefaultProps.radius / state.scope.view.zoom;
       return new state.scope.Path.Circle({
         insert: true,
         ...defaultProps,
+        ...circleDefaultProps,
         ...itemProps,
         radius: inputRadius,
         center,
@@ -179,6 +179,7 @@ export const Polygon = () => {
         dispatch({
           type: 'addItem',
           item: createItem(NAME as any, {
+            color: path.current.strokeColor?.toCSS(true),
             segments: _.map(path.current.segments, (segment) => {
               return [segment.point.x, segment.point.y];
             }),
@@ -201,15 +202,23 @@ export const Polygon = () => {
       if (isMouseLeft(event)) {
         if (state.scope) {
           if (!path.current) {
-            path.current = createPath([e.point]);
-            const currentCircle = createCircle(e.point);
+            const currentColor = state.scope?.Color.random().toCSS(true);
+
+            path.current = createPath([e.point], {
+              strokeColor: currentColor,
+            });
+            const currentCircle = createCircle(e.point, {
+              strokeColor: currentColor,
+            });
 
             if (currentCircle) {
               currentCircles.current.push(currentCircle);
             }
           } else {
             path.current.add(e.point);
-            const currentCircle = createCircle(e.point);
+            const currentCircle = createCircle(e.point, {
+              strokeColor: path.current.strokeColor?.toCSS(true),
+            });
 
             if (currentCircle) {
               currentCircles.current.push(currentCircle);
@@ -234,7 +243,9 @@ export const Polygon = () => {
             currentPathLine.current = createCurrentPathLine([
               path.current.lastSegment.point,
               e.point,
-            ]);
+            ], {
+              strokeColor: path.current.strokeColor?.toCSS(true),
+            });
           }
         }
       }
@@ -248,17 +259,24 @@ export const Polygon = () => {
 
       if (state.scope && path.current) {
         removeCurrentPathLine();
-        currentPathLine.current = createCurrentPathLine([
-          path.current.lastSegment.point,
-          event.point,
-        ]);
+        currentPathLine.current = createCurrentPathLine(
+          [path.current.lastSegment.point, event.point],
+          {
+            strokeColor: path.current.strokeColor?.toCSS(true),
+          },
+        );
+
+        currentPathLine.current?.sendToBack();
 
         if (path.current.segments.length > 1) {
           removeDashPathLine();
-          dashPathLine.current = createDashPathLine([
-            path.current.firstSegment.point,
-            event.point,
-          ]);
+          dashPathLine.current = createDashPathLine(
+            [path.current.firstSegment.point, event.point],
+            {
+              strokeColor: path.current.strokeColor?.toCSS(true),
+            },
+          );
+          dashPathLine.current?.sendToBack();
         }
       }
     },
@@ -286,6 +304,7 @@ export const Polygon = () => {
           removePath();
           removeCurrentPathLine();
           removeDashPathLine();
+          removeCurrentCircles();
           break;
 
         default:

@@ -1,15 +1,13 @@
 import { useCallback, useEffect } from 'react';
 import { usePaper } from '../../context';
-import { ToolName } from '../types';
 
 const ZOOM_RATIO = 1.1;
 
 export const useMouseWheel = (
-  tool: ToolName,
-  callback?: (newZoom: number, viewZoom: number) => void,
+  name: string,
+  callback?: (newZoom: number, center: paper.Point) => void,
 ) => {
   const [state, dispatch] = usePaper();
-
 
   const handleMouseWheel = useCallback(
     (event: WheelEvent) => {
@@ -22,6 +20,10 @@ export const useMouseWheel = (
       event.stopPropagation();
       // calculate new zoom from wheel delta
       const newZoom = -event.deltaY > 0 ? 1 * ZOOM_RATIO : 1 / ZOOM_RATIO;
+
+      if (newZoom < 1 && view.zoom < 0.5) {
+        return;
+      }
       // get view bounding rectangle
       const { left, top } = view.element.getBoundingClientRect();
       // convert mouse point to project space
@@ -30,7 +32,7 @@ export const useMouseWheel = (
       );
       // transform view
       view.scale(newZoom, center);
-      callback?.(newZoom, view.zoom);
+      callback?.(newZoom, center);
       // dispatch new zoom
       dispatch({ type: 'setZoom', zoom: view.zoom });
     },
@@ -38,13 +40,11 @@ export const useMouseWheel = (
   );
 
   useEffect(() => {
-    if (state.scope && state.tool === tool) {
+    if (state.scope && state.tool === name) {
       document.addEventListener('wheel', handleMouseWheel);
     }
     return () => {
-      if (state.tool === tool) {
-        document.removeEventListener('wheel', handleMouseWheel);
-      }
+      document.removeEventListener('wheel', handleMouseWheel);
     };
-  }, [handleMouseWheel, state.scope, state.tool, tool]);
+  }, [handleMouseWheel, state.scope, state.tool, name]);
 };

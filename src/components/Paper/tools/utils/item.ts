@@ -7,9 +7,9 @@ export const defaultProps = {
   strokeScaling: false,
 };
 
-export const createItem = (type: ItemName, data: ItemData): Item => {
+export const createItem = (type: ItemName, data: ItemData): Item => {  
   return {
-    ...defaultProps,
+    // ...defaultProps,
     ...data,
     id: uuidv4(),
     type,

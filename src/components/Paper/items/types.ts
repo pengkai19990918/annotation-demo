@@ -11,11 +11,15 @@ export enum ItemName {
 export type Item = {
   id: string;
   type: string;
+  color?: string;
+  label?: string;
   segments?: number[][];
 };
 
-export type ItemData = {
-  id?: string;
-  type?: string;
-  segments?: number[][];
-};
+export type ItemData = Partial<{
+  id: string;
+  type: string;
+  color: string;
+  label: string;
+  segments: number[][];
+}>;

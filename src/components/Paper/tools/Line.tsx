@@ -11,7 +11,7 @@ import {
 } from './utils';
 import { createItem, defaultProps } from './utils/item';
 import _ from 'lodash';
-import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
+import { useCrossLine } from '@/components/Paper/tools/hooks/useCrossLine';
 
 const NAME = ToolName.Line;
 
@@ -28,8 +28,8 @@ export const Line = () => {
   const { drawCrossLine } = useCrossLine();
 
 
-  useMouseWheel(NAME, (newZoom) => {
-    drawCrossLine();
+  useMouseWheel(NAME,(newZoom, center) => {
+    drawCrossLine(center);
     if (currentCircles.current.length > 0) {
       // 缩放锚点 保持锚点大小不变（视觉大小）
       currentCircles.current.forEach((circle) => {

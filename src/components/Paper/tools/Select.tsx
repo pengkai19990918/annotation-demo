@@ -1,11 +1,11 @@
-import { useCallback, useRef } from 'react';
+import { TItemType } from '@/components/Paper/enums';
+import { useCrossLine } from '@/components/Paper/tools/hooks/useCrossLine';
 import _ from 'lodash';
+import { useCallback, useEffect, useRef } from 'react';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
 import { ToolName } from './types';
 import { useMouseWheel } from './utils';
-import { TItemType } from '@/components/Paper/enums';
-import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
 
 interface TBaseItem extends paper.Item {
   itemType?: string;
@@ -15,14 +15,14 @@ interface TBaseItem extends paper.Item {
 }
 
 type TNowItem = {
-  item: TBaseItem,
-}
-
+  item: TBaseItem;
+};
 
 const NAME = ToolName.Select;
 
 export const Select = () => {
   const [state, dispatch] = usePaper();
+
   const item = useRef<paper.Item & { props?: any; segments?: any }>();
   const point = useRef<paper.Point>();
   const changed = useRef<boolean>(false);
@@ -30,10 +30,10 @@ export const Select = () => {
   const selectItem = useRef<TBaseItem>();
 
   const { drawCrossLine } = useCrossLine();
-  useMouseWheel(NAME, () => {
-    drawCrossLine();
-  });
 
+  useMouseWheel( NAME,(newZoom, center) => {
+    drawCrossLine(center);
+  });
 
   /**
    * @description 鼠标悬停
@@ -42,8 +42,10 @@ export const Select = () => {
    * */
   const itemHover = (hitItem: TBaseItem | undefined) => {
     if (hitItem) {
-
-      if (hoverItem.current && hoverItem.current.props.id !== hitItem.props.id) {
+      if (
+        hoverItem.current &&
+        hoverItem.current.props.id !== hitItem.props.id
+      ) {
         const anchors = hoverItem.current.parent.getItems({
           itemType: TItemType.ANCHOR,
         });
@@ -64,9 +66,7 @@ export const Select = () => {
           anchor.visible = true;
         });
       }
-
     } else {
-
       if (hoverItem.current && hoverItem.current.props.id !== state.selection) {
         const anchors = hoverItem.current.parent.getItems({
           itemType: TItemType.ANCHOR,
@@ -80,7 +80,6 @@ export const Select = () => {
     }
   };
 
-
   /**
    * @description 根据当前的hit item 获取需要选中的item
    * @param hit
@@ -88,7 +87,6 @@ export const Select = () => {
    * */
   const getCurrentItem = (hit: paper.HitResult & TNowItem) => {
     if (hit && hit.item) {
-
       if (hit.item.itemType === TItemType.ANCHOR) {
         const hitItem = hit.item.parent.getItem({
           itemType: TItemType.PATH,
@@ -99,7 +97,6 @@ export const Select = () => {
       } else if (hit.item.itemType === TItemType.PATH) {
         return hit.item;
       }
-
       return;
     }
   };
@@ -109,9 +106,9 @@ export const Select = () => {
    * @param options
    * */
   const changeRectangle = (options: {
-    currentItem: TBaseItem,
-    index: number,
-    point: paper.Point
+    currentItem: TBaseItem;
+    index: number;
+    point: paper.Point;
   }) => {
     const { currentItem, index, point } = options;
 
@@ -120,70 +117,82 @@ export const Select = () => {
       currentItem.segments[1].point.y = point.y;
       currentItem.segments[2].point.x = point.x;
 
-      currentItem.parent.getItem({
-        itemType: TItemType.ANCHOR,
-        data: { index: 1 },
-      }).position.set(currentItem.segments[1].point);
+      currentItem.parent
+        .getItem({
+          itemType: TItemType.ANCHOR,
+          data: { index: 1 },
+        })
+        .position.set(currentItem.segments[1].point);
 
-      currentItem.parent.getItem({
-        itemType: TItemType.ANCHOR,
-        data: { index: 2 },
-      }).position.set(currentItem.segments[2].point);
-
+      currentItem.parent
+        .getItem({
+          itemType: TItemType.ANCHOR,
+          data: { index: 2 },
+        })
+        .position.set(currentItem.segments[2].point);
     } else if (index === 1) {
       currentItem.segments[0].point.y = point.y;
       currentItem.segments[2].point.x = point.x;
 
-      currentItem.parent.getItem({
-        itemType: TItemType.ANCHOR,
-        data: { index: 0 },
-      }).position.set(currentItem.segments[0].point);
+      currentItem.parent
+        .getItem({
+          itemType: TItemType.ANCHOR,
+          data: { index: 0 },
+        })
+        .position.set(currentItem.segments[0].point);
 
-      currentItem.parent.getItem({
-        itemType: TItemType.ANCHOR,
-        data: { index: 2 },
-      }).position.set(currentItem.segments[2].point);
-
+      currentItem.parent
+        .getItem({
+          itemType: TItemType.ANCHOR,
+          data: { index: 2 },
+        })
+        .position.set(currentItem.segments[2].point);
     } else if (index === 2) {
       currentItem.segments[1].point.x = point.x;
       currentItem.segments[3].point.y = point.y;
 
-      currentItem.parent.getItem({
-        itemType: TItemType.ANCHOR,
-        data: { index: 1 },
-      }).position.set(currentItem.segments[1].point);
+      currentItem.parent
+        .getItem({
+          itemType: TItemType.ANCHOR,
+          data: { index: 1 },
+        })
+        .position.set(currentItem.segments[1].point);
 
-      currentItem.parent.getItem({
-        itemType: TItemType.ANCHOR,
-        data: { index: 3 },
-      }).position.set(currentItem.segments[3].point);
-
+      currentItem.parent
+        .getItem({
+          itemType: TItemType.ANCHOR,
+          data: { index: 3 },
+        })
+        .position.set(currentItem.segments[3].point);
     } else if (index === 3) {
       currentItem.segments[0].point.x = point.x;
       currentItem.segments[2].point.y = point.y;
 
-      currentItem.parent.getItem({
-        itemType: TItemType.ANCHOR,
-        data: { index: 0 },
-      }).position.set(currentItem.segments[0].point);
+      currentItem.parent
+        .getItem({
+          itemType: TItemType.ANCHOR,
+          data: { index: 0 },
+        })
+        .position.set(currentItem.segments[0].point);
 
-      currentItem.parent.getItem({
-        itemType: TItemType.ANCHOR,
-        data: { index: 2 },
-      }).position.set(currentItem.segments[2].point);
+      currentItem.parent
+        .getItem({
+          itemType: TItemType.ANCHOR,
+          data: { index: 2 },
+        })
+        .position.set(currentItem.segments[2].point);
     }
     currentItem.segments[index].point.set(point);
-  }
-
+  };
 
   /**
    * @description 根据item类型修改item
    * @param options
    * */
   const changeItem = (options: {
-    currentItem: TBaseItem,
-    index: number,
-    point: paper.Point
+    currentItem: TBaseItem;
+    index: number;
+    point: paper.Point;
   }) => {
     const { currentItem, index, point } = options;
 
@@ -227,55 +236,58 @@ export const Select = () => {
           point.current = undefined;
           dispatch({ type: 'setSelection', selection: undefined });
         }
-
       }
     },
     [state.scope, dispatch],
   );
 
-  const handleMouseMove = useCallback((event: paper.ToolEvent) => {
-    drawCrossLine(event.point);
-    if (state.scope) {
-      const hit = state.scope.project.hitTest(event.point, {
-        fill: true,
-        segments: false,
-        stroke: true,
-        tolerance: 10 / state.scope.view.zoom,
-      });
-      const hitItem = getCurrentItem(hit);
-      itemHover(hitItem);
-    }
-  }, [state.scope, state.selection, dispatch]);
-
-  const handleMouseDrag = useCallback((event: paper.ToolEvent) => {
-    drawCrossLine(event.point);
-    if (selectItem.current && point.current) {
-
-      if (selectItem.current.itemType === TItemType.PATH) {
-
-        selectItem.current.parent.translate(event.point.subtract(point.current));
-        changed.current = true;
-        point.current = event.point;
-
-      } else if (selectItem.current.itemType === TItemType.ANCHOR) {
-        if (!item.current) {
-          return;
-        }
-        const translate = event.point.subtract(point.current);
-        selectItem.current.translate(translate);
-
-        changeItem({
-          currentItem: item.current,
-          index: selectItem.current.data.index,
-          point: selectItem.current.position,
+  const handleMouseMove = useCallback(
+    (event: paper.ToolEvent) => {
+      drawCrossLine(event.point);
+      if (state.scope) {
+        const hit = state.scope.project.hitTest(event.point, {
+          fill: true,
+          segments: false,
+          stroke: true,
+          tolerance: 10 / state.scope.view.zoom,
         });
-
-        changed.current = true;
-        point.current = event.point;
+        const hitItem = getCurrentItem(hit);
+        itemHover(hitItem);
       }
+    },
+    [state.scope, state.selection, dispatch],
+  );
 
-    }
-  }, [state.scope, state.image, state.selection, dispatch]);
+  const handleMouseDrag = useCallback(
+    (event: paper.ToolEvent) => {
+      drawCrossLine(event.point);
+      if (selectItem.current && point.current) {
+        if (selectItem.current.itemType === TItemType.PATH) {
+          selectItem.current.parent.translate(
+            event.point.subtract(point.current),
+          );
+          changed.current = true;
+          point.current = event.point;
+        } else if (selectItem.current.itemType === TItemType.ANCHOR) {
+          if (!item.current) {
+            return;
+          }
+          const translate = event.point.subtract(point.current);
+          selectItem.current.translate(translate);
+
+          changeItem({
+            currentItem: item.current,
+            index: selectItem.current.data.index,
+            point: selectItem.current.position,
+          });
+
+          changed.current = true;
+          point.current = event.point;
+        }
+      }
+    },
+    [state.scope, state.image, state.selection, dispatch],
+  );
 
   const handleMouseUp = useCallback(() => {
     if (item.current && changed.current) {

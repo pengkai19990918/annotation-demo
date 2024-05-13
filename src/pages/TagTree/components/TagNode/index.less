@@ -1,0 +1,103 @@
+@line: {
+  @color: rgb(102, 0, 255);
+  @width: 10px;
+  @margin-left: 30px;
+  @size: 3px;
+  @radius: 5px;
+};
+
+@selfNode: {
+  @padding: 10px;
+}
+
+@leafNode: {
+  @padding: 10px 0;
+}
+
+.dragging {
+  background-color: black;
+}
+
+.tagNode {
+  display: flex;
+  align-items: center;
+  padding: 0 @selfNode[@padding];
+
+  .tagNode {
+    position: relative;
+    margin-left: @line[@margin-left];
+    &::before {
+      position: absolute;
+      left: -@line[@width];
+      top: 50%;
+      transform: translate(0, -50%);
+      content: '';
+      display: block;
+      width: @line[@width];
+      height: 100%;
+      border-left: @line[@size] solid @line[@color];
+    }
+  }
+
+  .tagNode:first-child {
+    &::before {
+      height: calc(50% + @line[@size]);
+      border-top: @line[@size] solid @line[@color];
+      border-top-left-radius: @line[@radius];
+      transform: translate(0, -(@line[@size] / 2));
+    }
+  }
+
+  .tagNode:last-child {
+    &::before {
+      height: calc(50% + @line[@size]);
+      border-bottom: @line[@size] solid @line[@color];
+      border-bottom-left-radius: @line[@radius];
+      transform: translate(0, calc(-100% + (@line[@size] / 2)));
+    }
+  }
+
+  .selfNode {
+    position: relative;
+    &::before {
+      position: absolute;
+      left: -@line[@width] - @selfNode[@padding] + @line[@size];
+      top: 50%;
+      transform: translate(0, -50%);
+      content: '';
+      display: block;
+      width: @line[@width] + @selfNode[@padding];
+      height: @line[@size];
+      background-color: @line[@color];
+    }
+
+    &::after {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translate(100%, -50%);
+      content: '';
+      display: block;
+      width: @line[@width] + @selfNode[@padding];
+      height: @line[@size];
+      background-color: @line[@color];
+    }
+
+    &:only-child {
+      padding: @leafNode[@padding];
+      &::after {
+        display: none;
+      }
+    }
+  }
+
+  .tagNode:only-child {
+    &::before {
+      display: none;
+    }
+
+    & > .selfNode::before {
+      left: -@line[@width] - @selfNode[@padding];
+    }
+  }
+}

@@ -1,7 +1,7 @@
 export { createItem, defaultProps } from './item';
-export { usePan } from './pan';
-export { usePinch } from './pinch';
-export { useMouseWheel } from './wheel';
+export { usePan } from '../hooks/usePan';
+export { usePinch } from '../hooks/usePinch';
+export { useMouseWheel } from '../hooks/useMouseWheel';
 
 type handleMouseButtonReturn =
   | 'MouseLeft'

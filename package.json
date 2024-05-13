@@ -4,18 +4,23 @@
   "scripts": {
     "build": "max build",
     "dev": "max dev",
+    "dev:nocompress": "cross-env UMI_DEV_SERVER_COMPRESS=none max dev",
     "format": "prettier --cache --write .",
     "postinstall": "max setup",
     "prepare": "husky install",
     "setup": "max setup",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "start:nocompress": "npm run dev:nocompress"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.1",
-    "@ant-design/pro-chat": "^1.12.2",
+    "@ant-design/pro-chat": "^1.13.3",
     "@ant-design/pro-components": "^2.6.49",
+    "@ant-design/pro-editor": "^1.1.2",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@react-three/drei": "^9.105.3",
     "@react-three/fiber": "^8.16.2",
+    "@techstark/opencv-js": "4.9.0-release.3",
     "@types/three": "^0.163.0",
     "@umijs/max": "^4.1.2",
     "antd": "^5.15.2",
@@ -32,7 +37,8 @@
     "tesseract.js": "^5.0.5",
     "three": "^0.163.0",
     "tinycolor2": "^1.6.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@react-three/eslint-plugin": "^0.1.1",
@@ -41,6 +47,7 @@
     "@types/react-dom": "^18.2.22",
     "@types/tinycolor": "^1.1.27",
     "@types/uuid": "^9.0.8",
+    "cross-env": "^7.0.3",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",

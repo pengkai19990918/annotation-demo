@@ -5,7 +5,7 @@ import { PaperKeyEvent, PaperMouseEvent } from './data';
 import { ToolName } from './types';
 import { isMouseLeft, isMouseRight, StopMouseEvents, useMouseWheel } from './utils';
 import { createItem } from './utils/item';
-import { useCrossLine } from '@/components/Paper/tools/utils/useCrossLine';
+import { useCrossLine } from '@/components/Paper/tools/hooks/useCrossLine';
 
 const NAME = ToolName.Point;
 
@@ -18,8 +18,8 @@ export const Point = () => {
 
   const { drawCrossLine } = useCrossLine();
 
-  useMouseWheel(NAME, () => {
-    drawCrossLine();
+  useMouseWheel( NAME,(newZoom, center) => {
+    drawCrossLine(center);
   });
 
   /**
