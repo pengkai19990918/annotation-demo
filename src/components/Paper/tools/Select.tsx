@@ -1,7 +1,7 @@
 import { TItemType } from '@/components/Paper/enums';
 import { useCrossLine } from '@/components/Paper/tools/hooks/useCrossLine';
 import _ from 'lodash';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { Tool } from 'react-paper-bindings';
 import { usePaper } from '../context';
 import { ToolName } from './types';
@@ -115,7 +115,7 @@ export const Select = () => {
     // 根据某个锚点的位置修改其他锚点的位置
     if (index === 0) {
       currentItem.segments[1].point.y = point.y;
-      currentItem.segments[2].point.x = point.x;
+      currentItem.segments[3].point.x = point.x;
 
       currentItem.parent
         .getItem({
@@ -127,9 +127,9 @@ export const Select = () => {
       currentItem.parent
         .getItem({
           itemType: TItemType.ANCHOR,
-          data: { index: 2 },
+          data: { index: 3 },
         })
-        .position.set(currentItem.segments[2].point);
+        .position.set(currentItem.segments[3].point);
     } else if (index === 1) {
       currentItem.segments[0].point.y = point.y;
       currentItem.segments[2].point.x = point.x;

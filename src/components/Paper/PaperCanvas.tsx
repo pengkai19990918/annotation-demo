@@ -65,7 +65,7 @@ export const Canvas = forwardRef<HTMLCanvasElement | null, Props>(
         <Context.Provider value={value}>
           <View>
             <ImageLayer image={image} />
-            <ItemLayer  items={state.data} active={true}/>
+            <ItemLayer items={state.data} active={true} />
           </View>
           {_.keys(Tool).map((tool: any) => {
             // @ts-ignore

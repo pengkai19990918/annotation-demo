@@ -1,6 +1,5 @@
 import {
   BufferGeometry,
-  Color,
   FileLoader,
   Float32BufferAttribute,
   Loader,
@@ -38,38 +37,43 @@ class BINLoader extends Loader {
     loader.load(
       url,
       function (data) {
-        console.log(data.toString());
-
-        // console.log(new DataView(data).getFloat16(0));
         try {
           // 解析.bin 点云的二进制数据
           const reader = new FileReader();
           reader.onload = function (event) {
-
             function parseBinaryData(arrayBuffer: ArrayBuffer) {
-              console.log(arrayBuffer);
-              
               const dataView = new DataView(arrayBuffer);
-              const pointCount = arrayBuffer.byteLength / (4 * 3); // 假设每个点有3个Float32坐标
+
+              // 假设每个点有 x, y, z 和 intensity 四个浮点数
+              const numPoints =
+                arrayBuffer.byteLength / (4 * Float32Array.BYTES_PER_ELEMENT);
               const points = [];
-          
-              // for (let i = 0; i < pointCount; i++) {
-                  
-              //     const x = dataView.getFloat32(i * 12, true); // true 表示小端字节序
-              //     const y = dataView.getFloat32(i * 12 + 4, true);
-              //     const z = dataView.getFloat32(i * 12 + 8, true);
-              //     points.push({x, y, z});
-              // }
-          
-              console.log(points);
-          }
+              for (let i = 0; i < numPoints; i++) {
+                const x = dataView.getFloat32(
+                  i * 4 * Float32Array.BYTES_PER_ELEMENT,
+                  true,
+                );
+                const y = dataView.getFloat32(
+                  i * 4 * Float32Array.BYTES_PER_ELEMENT + 4,
+                  true,
+                );
+                const z = dataView.getFloat32(
+                  i * 4 * Float32Array.BYTES_PER_ELEMENT + 8,
+                  true,
+                );
+                // 点云强度
+                // const intensity = dataView.getFloat32(
+                //   i * 4 * Float32Array.BYTES_PER_ELEMENT + 12,
+                //   true,
+                // );
+                // points.push({ x, y, z, intensity });
+                points.push(x, y, z,);
+              }
 
-          parseBinaryData(event.target?.result as ArrayBuffer);
+              return points;
+            }
 
-
-            const data = new Float32Array(
-              event.target?.result as ArrayBufferLike,
-            );
+            const data = new Float32Array(parseBinaryData(event.target?.result as ArrayBuffer));
             onLoad?.(scope.parse(data));
           };
           reader.readAsArrayBuffer(new Blob([data]) as unknown as Blob);
@@ -88,12 +92,6 @@ class BINLoader extends Loader {
   }
 
   parse(data: Float32Array) {
-    // parse data
-
-    const c = new Color();
-
-    // build geometry
-
     const geometry = new BufferGeometry();
 
     if (data.length > 0)

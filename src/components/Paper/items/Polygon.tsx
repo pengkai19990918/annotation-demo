@@ -1,9 +1,9 @@
-import _ from 'lodash';
-import { Circle, Group, Path as PaperPath } from 'react-paper-bindings';
 import { Context } from '@/components/Paper/context';
-import { useContext, useState, useCallback } from 'react';
-import tinycolor from "tinycolor2";
 import { TItemType } from '@/components/Paper/enums';
+import _ from 'lodash';
+import { useCallback, useContext } from 'react';
+import { Circle, Group, Path as PaperPath } from 'react-paper-bindings';
+import tinycolor from 'tinycolor2';
 import { anchorDefaultProps, pathDefaultProps } from '../common/constant';
 
 type Props = {
@@ -40,11 +40,9 @@ export const Polygon = (props: Props) => {
   const [state, dispatch] = value;
 
   const currentVisible = state.selection === id;
-  
+
   return (
-    <Group
-      itemType={TItemType.GROUP}
-    >
+    <Group itemType={TItemType.GROUP}>
       <PaperPath
         {...pathDefaultProps}
         {...props}
@@ -56,21 +54,23 @@ export const Polygon = (props: Props) => {
       />
 
       {_.map(props.segments, (segment, index) => {
+        
         return (
           <Circle
-          key={index}
-          data={{index}}
-          position={segment}
-          radius={anchorDefaultProps.radius / (state.scope?.view.zoom || 1)}
-          strokeScaling={anchorDefaultProps.strokeScaling}
-          strokeColor={color}
-          fillColor={tinycolor(color).setAlpha(currentVisible ? 1 : 0.5).toRgbString()}
-          visible={currentVisible}
-          itemType={TItemType.ANCHOR}
+            key={index}
+            data={{ index }}
+            position={segment}
+            radius={anchorDefaultProps.radius / (state.scope?.view.zoom || 1)}
+            strokeScaling={anchorDefaultProps.strokeScaling}
+            strokeColor={color}
+            fillColor={tinycolor(color)
+              .setAlpha(currentVisible ? 1 : 0.5)
+              .toRgbString()}
+            visible={currentVisible}
+            itemType={TItemType.ANCHOR}
           />
         );
       })}
     </Group>
-
   );
 };

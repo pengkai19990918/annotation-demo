@@ -94,6 +94,7 @@ const Player: React.FC<any> = (props) => {
         sendNextRequest(); // 处理下一个请求
       }
     };
+    
     for (let i = 0; i < limits; i++) {
       sendNextRequest(); // 启动请求队列处理
     }
@@ -114,9 +115,11 @@ const Player: React.FC<any> = (props) => {
   }, []);
 
   return (
-    <div className="player">
+    <div className="player flex flex-col">
       <PlayerContext.Provider value={sources[currentIndex]}>
-        {children}
+        <div className='flex-1'>
+          {children}
+        </div>
       </PlayerContext.Provider>
 
       <Flex align={'center'}>

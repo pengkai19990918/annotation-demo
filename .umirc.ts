@@ -1,14 +1,19 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
-  antd: {},
+  antd: {
+    // configProvider
+    configProvider: {},
+    // themes
+    dark: true,
+  },
   access: {},
   model: {},
   initialState: {},
   request: {},
   mfsu: false,
   layout: {
-    title: '@umijs/max',
+    title: 'Bigtou',
   },
   routes: [
     {
@@ -35,23 +40,15 @@ export default defineConfig({
       path: '/chat',
       component: './Chat',
     },
-    {
-      name: '权限演示',
-      path: '/access',
-      component: './Access',
-    },
-    {
-      name: ' CRUD 示例',
-      path: '/table',
-      component: './Table',
-    },
   ],
+
   proxy: {
     '/api': {
-      'target': 'http://127.0.0.1:3000',
-      'changeOrigin': true,
-      'pathRewrite': { '^/api' : '' },
+      target: 'http://127.0.0.1:3000',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' },
     },
   },
   npmClient: 'pnpm',
+  tailwindcss: {},
 });
